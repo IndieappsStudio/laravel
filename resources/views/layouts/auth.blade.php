@@ -18,9 +18,7 @@
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <link href="{{asset('assets/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/font-awesome/css/all.min.css')}}" rel="stylesheet">
 
@@ -29,7 +27,6 @@
     <link href="{{asset('assets/css/connect.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/dark_theme.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
-    @livewireStyles
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -38,53 +35,24 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body>
+<body class="auth-page sign-in">
+
 <div class='loader'>
     <div class='spinner-grow text-primary' role='status'>
         <span class='sr-only'>Loading...</span>
     </div>
 </div>
 <div class="connect-container align-content-stretch d-flex flex-wrap">
-    @include('layouts/components/sidebar')
-    <div class="page-container">
-        @include('layouts/components/header')
-        <div class="page-content">
-            <div class="page-info">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        @yield('breadcrumb')
-                    </ol>
-                </nav>
-                <div class="page-options">
-                    @yield('page-options')
-                </div>
-            </div>
-            <div class="main-wrapper">
-                {{ $slot }}
-            </div>
-        </div>
-        @include('layouts/components/footer')
+    <div class="container-fluid">
+        @yield('content')
     </div>
 </div>
-@livewire('components.toast')
-@livewire('components.modal')
 
 <!-- Javascripts -->
-@livewireScripts
 <script src="{{asset('assets/plugins/jquery/jquery-3.4.1.min.js')}}"></script>
 <script src="{{asset('assets/plugins/bootstrap/popper.min.js')}}"></script>
 <script src="{{asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{asset('assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
-<script src="{{asset('assets/plugins/jquery-sparkline/jquery.sparkline.min.js')}}"></script>
-<script src="{{asset('assets/plugins/apexcharts/dist/apexcharts.min.js')}}"></script>
-<script src="{{asset('assets/plugins/blockui/jquery.blockUI.js')}}"></script>
-<script src="{{asset('assets/plugins/flot/jquery.flot.min.js')}}"></script>
-<script src="{{asset('assets/plugins/flot/jquery.flot.time.min.js')}}"></script>
-<script src="{{asset('assets/plugins/flot/jquery.flot.symbol.min.js')}}"></script>
-<script src="{{asset('assets/plugins/flot/jquery.flot.resize.min.js')}}"></script>
-<script src="{{asset('assets/plugins/flot/jquery.flot.tooltip.min.js')}}"></script>
 <script src="{{asset('assets/js/connect.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/dashboard.js')}}"></script>
-<script src="{{asset('assets/js/custom.js')}}"></script>
 </body>
 </html>

@@ -19,7 +19,6 @@
                             </div>
                             <div class="form-group">
                                 <input id="password" name="password" type="password" class="form-control @error('password') is-invalid @enderror" autocomplete="current-password"placeholder="{{ __('Password') }}" required>
-
                                 @error('password')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -35,7 +34,7 @@
                                     <a href="{{ route('password.request') }}" class="forgot-link m-0">{{ __('Forgot Your Password?') }}</a>
                                 @endif
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block btn-submit">{{ __('Sign In') }}</button>
+                            <button type="submit" class="btn btn-primary btn-block btn-submit">{{ __('Login') }}</button>
                             @if (Route::has('register'))
                                 <p class="mt-3">Don't have an account yet? <a href="{{ route('register') }}" class="forgot-link m-0">{{ __('Register now') }}</a></p>
                             @endif

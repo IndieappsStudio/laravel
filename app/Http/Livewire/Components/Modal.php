@@ -31,6 +31,7 @@ class Modal extends Component
     public function close()
     {
         $this->isOpen = false;
+        $this->emit('hideBaseModal');
     }
 
     public function render()

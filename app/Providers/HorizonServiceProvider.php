@@ -35,7 +35,9 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         Gate::define('viewHorizon', function ($user) {
             return in_array($user->email, [
-                //
+                //TODO: set super admin email for access to horizon
+                'admin@indieapps.id',
+                'admin@mail.com',
             ]);
         });
     }

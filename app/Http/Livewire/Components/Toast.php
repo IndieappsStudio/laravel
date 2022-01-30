@@ -22,7 +22,7 @@ class Toast extends Component
         } else {
             $this->time = Carbon::parse($time)->diffForHumans();
         }
-        
+
         $this->emit('showBaseToast');
     }
 

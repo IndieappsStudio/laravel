@@ -1,4 +1,4 @@
-FROM php:8
+FROM php:8.0.0
 
 RUN apt-get update -y && apt-get install -y zip unzip git cron libzip-dev zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev supervisor
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.0.8
@@ -18,7 +18,7 @@ RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 COPY --chown=www:www . /var/www
 
-COPY ./supervisor/ /etc/supervisor
+COPY ./deployment/supervisor/ /etc/supervisor
 RUN chown -R www:www /var/log/supervisor
 
 CMD supervisord -c /etc/supervisor/supervisord.conf

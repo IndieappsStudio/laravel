@@ -3,11 +3,12 @@
 namespace App\Http\Livewire\Pages;
 
 use App\Http\Livewire\Traits\InteractsWithModal;
+use App\Http\Livewire\Traits\InteractsWithToast;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
-    use InteractsWithModal;
+    use InteractsWithModal, InteractsWithToast;
 
     public function render()
     {
@@ -17,5 +18,10 @@ class Dashboard extends Component
     public function delete()
     {
         $this->openModal('Delete Confirmation', 'modals.delete-modal');
+    }
+
+    public function message()
+    {
+        $this->toast('Notification', 'Hello this is notification');
     }
 }

@@ -1,3 +1,3 @@
 <div>
-    <h3>Close your eyes. Count to one. That is how long forever feels.</h3>
+    <h3>Are you sure for delete your data?</h3>
 </div>

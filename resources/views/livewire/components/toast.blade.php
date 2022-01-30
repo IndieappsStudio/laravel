@@ -1,10 +1,11 @@
 <div>
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 10px; right: 10px; z-index:10000;">
+    <div class="toast fade" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: absolute; top: 10px; right: 10px; z-index:10000; width: 300px">
         <div class="toast-header">
-            <img src="../../assets/images/logo.png" class="m-r-sm" alt="Toast image" height="18" width="18">
-            <strong class="me-auto">{{ $title }}</strong>
-            <small class="text-muted">{{ $time }}</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            <strong class="mr-auto">{{ $title }}</strong>
+            <small>{{ $time }}</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <i class="material-icons">close</i>
+            </button>
         </div>
         <div class="toast-body">
             {!! $message !!}

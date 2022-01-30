@@ -14,7 +14,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./deployment/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - database-network
       - proxy
@@ -31,15 +31,6 @@ services:
       - "traefik.http.routers.${IMAGE_NAME}-${APP_ENV}-secure.service=${IMAGE_NAME}-${APP_ENV}"
       - "traefik.http.services.${IMAGE_NAME}-${APP_ENV}.loadbalancer.server.port=9000"
       - "traefik.docker.network=proxy"
-
-  redis:
-    image: redis:6.0-alpine3.12
-    container_name: ${IMAGE_NAME}-redis
-    restart: unless-stopped
-    networks:
-      - database-network
-    volumes:
-      - ./storage/redis/data:/data:rw
 
 #Docker Networks
 networks:

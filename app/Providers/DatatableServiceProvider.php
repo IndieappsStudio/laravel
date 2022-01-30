@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
 
 class DatatableServiceProvider extends ServiceProvider
 {
@@ -32,37 +34,66 @@ class DatatableServiceProvider extends ServiceProvider
             $sortType = $request->sort_type ?? 'desc';
             $filterColumns = blank($request->filter_columns) ? [] : explode(',', $request->filter_columns);
             $filterKeys = blank($request->filter_keys) ? [] : explode(',', $request->filter_keys);
+            $filterDateColumn = $request->filter_date_column;
+            $filterDateStart = $request->filter_date_start;
+            $filterDateEnd = $request->filter_date_end;
 
-            $query = $query->orWhere(function ($query) use ($searchColumns, $searchKey, $filterColumns, $filterKeys){
-                if (!blank($searchColumns)) {
+            if (!blank($searchColumns) && !blank($searchKey)) {
+                $query = $query->orWhere(function ($query) use ($searchColumns, $searchKey) {
                     foreach ($searchColumns as $searchColumn) {
                         if (str_contains($searchColumn, '.')) {
-                            $raw = explode('.', $searchColumn);
-                            $query = $query->orWhereHas($raw[0], function ($query) use ($raw, $searchKey) {
-                                $query->where($raw[1], 'LIKE', "%$searchKey%");
+                            $dir = Str::beforeLast($searchColumn, '.');
+                            $dir = Str::camel($dir);
+                            $col = Str::afterLast($searchColumn, '.');
+                            $query = $query->orWhereHas($dir, function ($query) use ($col, $searchKey) {
+                                $query->where($col, 'ILIKE', "%$searchKey%");
                             });
                         } else {
-                            $query = $query->orWhere($searchColumn, 'LIKE', "%$searchKey%");
+                            $query = $query->orWhere($searchColumn, 'ILIKE', "%$searchKey%");
                         }
                     }
-                }
-                if (!blank($filterColumns) && !blank($filterKeys)) {
+                });
+            }
+            if (!blank($filterColumns) && !blank($filterKeys)) {
+                $query = $query->where(function ($query) use ($filterColumns, $filterKeys) {
                     $size = count($filterColumns);
-                    for ($i=0; $i < $size; $i++) {
+                    for ($i = 0; $i < $size; $i++) {
                         $filterColumn = $filterColumns[$i];
                         $filterKey = $filterKeys[$i];
 
                         if (str_contains($filterColumn, '.')) {
                             $raw = explode('.', $filterColumn);
-                            $query = $query->orWhereHas($raw[0], function ($query) use ($raw, $filterKey) {
-                                $query->where($raw[1], $filterKey);
+                            $query = $query->whereHas($raw[0], function ($query) use ($raw, $filterKey) {
+                                if (str_contains($filterKey, '|')) {
+                                    $in = explode('|', $filterKey);
+                                    $query->whereIn($raw[1], $in);
+                                } else {
+                                    $query->where($raw[1], $filterKey);
+                                }
                             });
                         } else {
-                            $query = $query->orWhere($filterColumn, $filterKey);
+                            if (str_contains($filterKey, '|')) {
+                                $in = explode('|', $filterKey);
+                                $query = $query->whereIn($filterColumn, $in);
+                            } else {
+                                $query = $query->where($filterColumn, $filterKey);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            if (!blank($filterDateColumn) && (!blank($filterDateStart) || !blank($filterDateEnd))) {
+                $query = $query->where(function ($query) use ($filterDateColumn, $filterDateStart, $filterDateEnd) {
+                    if(!blank($filterDateStart)) {
+                        $filterDateStart = Carbon::parse($filterDateStart)->toDateTimeString();
+                        $query->where($filterDateColumn, '>=', $filterDateStart);
+                    }
+                    if(!blank($filterDateEnd)) {
+                        $filterDateEnd = Carbon::parse($filterDateEnd)->toDateTimeString();
+                        $query->where($filterDateColumn, '<=', $filterDateEnd);
+                    }
+                });
+            }
 
             $query->orderBy($sortColumn, strtolower($sortType));
             return $query;
