@@ -1,0 +1,87 @@
+stages:
+  - preparation
+  - building
+  - database
+
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+
+default:
+  before_script:
+    - cp -v manifest/staging/docker-compose.yml docker-compose.yml
+  tags:
+    - shell
+    - staging
+    - vps
+
+composer:
+  stage: preparation
+  script:
+    - echo "$ENV_STAGING" > "$(pwd)/.env"
+    - echo "$OAUTH_PRIVATE_STAGING" > "$(pwd)/storage/oauth-private.key"
+    - echo "$OAUTH_PUBLIC_STAGING" > "$(pwd)/storage/oauth-public.key"
+    - echo "$FIREBASE_ADMINSDK_STAGING" > "$(pwd)/storage/firebase-adminsdk.json"
+  only:
+    - staging
+  artifacts:
+    paths:
+      - storage/
+      - .env
+    expire_in: 1 days
+    when: always
+
+build-image:
+  stage: building
+  dependencies:
+    - composer
+  script:
+    - docker-compose up -d --build
+    - chmod -R a+rw storage
+    - chmod -R a+rw bootstrap/cache
+    - docker-compose exec -T --user root application php artisan key:generate
+    - docker-compose exec -T --user root application php artisan config:cache
+    - docker-compose exec -T --user root application php artisan storage:link
+    - docker-compose exec -T --user root application chmod -R a+rw storage
+    - docker-compose exec -T --user root application chmod -R a+rw bootstrap/cache
+  only:
+    - staging
+  environment:
+    name: staging
+    url: "$URL_STAGING"
+  artifacts:
+    paths:
+      - storage/
+      - bootstrap/cache/
+      - .env
+    expire_in: 1 days
+    when: always
+
+database-migration:
+  stage: database
+  dependencies:
+    - build-image
+  script:
+    - docker-compose exec -T --user root application php artisan migrate
+  only:
+    - staging
+  artifacts:
+    paths:
+      - storage/
+    expire_in: 1 days
+    when: always
+
+database-seeding:
+  stage: database
+  dependencies:
+    - build-image
+  script:
+    - docker-compose exec -T --user root application php artisan migrate:fresh --seed
+    - docker-compose exec -T --user root application php artisan passport:install --force
+  only:
+    - staging
+  when: manual
+  artifacts:
+    paths:
+      - storage/
+    expire_in: 1 days
+    when: always
