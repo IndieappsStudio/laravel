@@ -8,7 +8,7 @@ cache:
 
 default:
   before_script:
-    - cp -v manifest/staging/docker-compose.yml docker-compose.yml
+    - cp -v deployment/staging/docker-compose.yml docker-compose.yml
   tags:
     - shell
     - staging
